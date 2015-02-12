@@ -14,8 +14,11 @@ action :create do
     if online?
       @zpool.disks.each do |disk|
         short_disk = disk.split('/').last
-        next if vdevs.include? short_disk
-        Chef::Log.info("Adding #{disk} to pool #{@zpool.name}")
+        if vdevs.include? short_disk
+        	Chef::Log.info("Zpool - Disk #{disk} is already in pool #{@zpool.name}, so skipping any actions on it")	
+        	next
+        end
+        Chef::Log.info("Zpool - Adding #{disk} to pool #{@zpool.name}")
         shell_out!("zpool add #{args_from_resource(new_resource)} #{@zpool.name} #{disk}")
         new_resource.updated_by_last_action(true)
       end
@@ -23,7 +26,7 @@ action :create do
       Chef::Log.warn("Zpool #{@zpool.name} is #{@zpool.state}")
     end
   else
-    Chef::Log.info("Creating zpool #{@zpool.name}")
+    Chef::Log.info("Zpool - Creating zpool #{@zpool.name}")
     shell_out!("zpool create #{args_from_resource(new_resource)} #{@zpool.name} #{@zpool.disks.join(' ')}")
     new_resource.updated_by_last_action(true)
   end
@@ -31,7 +34,7 @@ end
 
 action :destroy do
   if created?
-    Chef::Log.info("Destroying zpool #{@zpool.name}")
+    Chef::Log.info("Zpool - Destroying zpool #{@zpool.name}")
     shell_out!("zpool destroy #{args_from_resource(new_resource)} #{@zpool.name}")
     new_resource.updated_by_last_action(true)
   end

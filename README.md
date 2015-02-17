@@ -48,7 +48,7 @@ To use the "entities" feature, in an attribute used by your cookbook, define the
     end
 
 
- it is also possible to destroy a pool:
+It is also possible to destroy a pool:
 
   zpool "test2" do
     action :destroy

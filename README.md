@@ -50,6 +50,6 @@ To use the "entities" feature, in an attribute used by your cookbook, define the
 
 It is also possible to destroy a pool:
 
-  zpool "test2" do
-    action :destroy
-  end
+    zpool "test2" do
+        action :destroy
+    end

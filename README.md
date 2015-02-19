@@ -22,7 +22,7 @@ Attributes
 
 Usage
 =====
-You may use both the "disks" notation or the "entities" notation, but keep in mind that in such a case you will mostly only be able to use "entities" to define "log" and "cache" devices (mainly because, from what i've seen, crating a flat RAID0 with a RAID10/50/60 at the same level is simply not supported by Zpool).
+You may use both the "disks" notation and the "entities" notation, but keep in mind that in such a case you will mostly only be able to use "entities" to define "log" and "cache" devices (mainly because, from what i've seen, crating a flat RAID0 with a RAID10/50/60 at the same level is simply not supported by Zpool).
 Note that while some sanity checks are performed, this provider will by no means protect you against all Zpool miss configurations requests. Its not that it would succeed in creating them, it would just wont give a "nice" chef error about it.
 
 To you the "disks" notation, simply feed an array to the provider:

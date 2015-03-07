@@ -226,12 +226,18 @@ def extract_short_name(workingset)
   # Chef::Log.info("Zpool - entered extract_short_name func")
   scrapping = []
   if workingset.kind_of?(Array)
-    workingset.each do |disk|
-     short_disk = disk.split('/').last
-     scrapping << short_disk unless disk == "mirror" or disk =~ /^[raid]/
-    end
+  	workingset.each do |disk|
+    	disk = disk.split('/').last unless ::File.exist?(disk) and ::File.ftype(disk) == "file"
+    	scrapping << disk unless disk == "mirror" or disk =~ /^[raid]/
+  	end
   else
-    scrapping = workingset.split('/').last unless workingset == "mirror" or workingset =~ /^[raid]/
+    if ::File.exist?(disk) and ::File.ftype(workingset) == "file"
+	  	Chef::Log.info("Zpool - extract_short_name - found the workingset of #{workingset}, to be a file.")
+	  	scrapping = workingset
+  	else
+  		Chef::Log.info("Zpool - extract_short_name - found the workingset of #{workingset}, to NOT be a file.")
+    	scrapping = workingset.split('/').last unless workingset == "mirror" or workingset =~ /^[raid]/
+  	end
   end
   # Chef::Log.info("Zpool - extract_short_name - scrapping is: #{scrapping}")
   return scrapping

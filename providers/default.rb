@@ -208,16 +208,14 @@ def sanity?
     Chef::Application.fatal!("Zpool - You must NOT assign a device twice. Duplicate assignment detected for: " + duplicity.flatten.select{|not_uniq| duplicity.flatten.count(not_uniq) > 1}.uniq.to_s + ".", 42) 
   end
   duplicity.flatten.each do |disk|
-    if @zpool.graceful == false and disk != "cache" and disk != "log" and disk != "mirror" and !disk =~ /^[raid]/ and !::File.exist?("/dev/" + disk)
-      Chef::Application.fatal!("Zpool - How are you planning on creating a zpool when device \"" + disk.to_s + "\" is missing from the system?", 42)
-    elsif @zpool.graceful == true
-        Chef::Log.info("Zpool - How are you planning on creating a zpool when device \"" + disk.to_s + "\" is missing from the system? sending a \"Next\" and hoping for the best.")
-        next
-    end
+    next if ::File.ftype(disk) == "file"
     if disk != "cache" and disk != "log" and disk != "mirror" and !disk =~ /^[raid]/ and !::File.exist?("/dev/" + disk)
-      Chef::Log.info("Zpool - How are you planning on creating a zpool when device \"" + disk.to_s + "\" is missing from the system?")
-      Chef::Log.info("Zpool - Sending a \"next\" for this action")
-      next
+      if @zpool.graceful
+        Chef::Log.warn("Zpool - How are you planning on creating a zpool when device \"" + disk.to_s + "\" is missing from the system? sending a \"Next\" and hoping for the best.")
+        next        
+      else
+        Chef::Application.fatal!("Zpool - How are you planning on creating a zpool when device \"" + disk.to_s + "\" is missing from the system?", 42)
+      end
     end
   end
 end
